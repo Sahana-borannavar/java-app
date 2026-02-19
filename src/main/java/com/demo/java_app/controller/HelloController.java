@@ -9,7 +9,7 @@ public class HelloController {
     // Existing endpoint — case-sensitive
     @GetMapping("/api/Hello")
     public String hello() {
-        return "Hello from Java App!";
+        return "Hello from Sahana!";
     }
 
     // Optional: avoid Whitelabel 404 on "/"
