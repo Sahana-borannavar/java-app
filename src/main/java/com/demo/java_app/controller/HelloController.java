@@ -12,9 +12,6 @@ public class HelloController {
         return "Hello, Everyone....!";
     }
 
-    // Optional: avoid Whitelabel 404 on "/"
-    @GetMapping("/")
-    public String root() {
-        return "App is up. Try /api/Hello";
+   
    }
-}
+
