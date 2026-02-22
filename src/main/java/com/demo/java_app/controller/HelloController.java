@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class HelloController {
 
     // Existing endpoint — case-sensitive
-    @GetMapping("/a")
+    @GetMapping("/")
     public String hello() {
         return "Hello, Everyone....!";
     }
