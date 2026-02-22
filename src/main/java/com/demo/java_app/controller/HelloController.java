@@ -7,9 +7,9 @@ import org.springframework.web.bind.annotation.RestController;
 public class HelloController {
 
     // Existing endpoint — case-sensitive
-    @GetMapping("/api/Hello")
+    @GetMapping("/a")
     public String hello() {
-        return "Hello from Sahana!";
+        return "Hello, Everyone....!";
     }
 
     // Optional: avoid Whitelabel 404 on "/"
