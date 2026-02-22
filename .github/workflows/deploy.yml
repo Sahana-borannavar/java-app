@@ -1,0 +1,66 @@
+name: CI/CD to EC2 (Java App, K8s, SHA tagging)
+ 
+on:
+  push:
+    branches:
+      - main     # change if your default branch is different
+ 
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+ 
+    steps:
+ 
+    #  Checkout repository
+    - name: Checkout code
+      uses: actions/checkout@v4
+ 
+    #  Login to Docker Hub
+    - name: Login to Docker Hub
+      uses: docker/login-action@v3
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+ 
+    #  Build Docker image (SHA + latest)
+    - name: Build Docker image (SHA + latest)
+      run: |
+        docker build -t ${{ secrets.DOCKER_USERNAME }}/java-app:${{ github.sha }} .
+        docker tag ${{ secrets.DOCKER_USERNAME }}/java-app:${{ github.sha }} \
+                   ${{ secrets.DOCKER_USERNAME }}/java-app:latest
+ 
+    # Push both tags
+    - name: Push Docker image (SHA + latest)
+      run: |
+        docker push ${{ secrets.DOCKER_USERNAME }}/java-app:${{ github.sha }}
+        docker push ${{ secrets.DOCKER_USERNAME }}/java-app:latest
+ 
+    # SSH to EC2 and deploy to Minikube
+    - name: Deploy to EC2 Minikube (update image to SHA, rollout)
+      uses: appleboy/ssh-action@v1.0.0
+      with:
+        host: ${{ secrets.EC2_HOST }}
+        username: ec2-user
+        key: ${{ secrets.EC2_SSH_KEY }}
+        script: |
+          set -e
+ 
+          echo " Using Minikube context"
+          kubectl config use-context minikube || true
+ 
+          echo " Updating deployment image to new SHA"
+          kubectl set image deployment/java-app-deployment \
+          java-app=${{ secrets.DOCKER_USERNAME }}/java-app:${{ github.sha }}
+ 
+          echo " Restarting deployment"
+          kubectl rollout restart deployment/java-app-deployment
+ 
+          echo " Waiting for rollout to complete..."
+          kubectl rollout status deployment/java-app-deployment --timeout=180s
+ 
+          echo " Verifying deployed image:"
+          kubectl get deployment java-app-deployment \
+          -o jsonpath='{.spec.template.spec.containers[0].image}'; echo
+ 
+          echo " Current pods:"
+          kubectl get pods -o wide
