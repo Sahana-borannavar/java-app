@@ -3,7 +3,7 @@ name: CI/CD to EC2 (Java App, K8s, SHA tagging)
 on:
   push:
     branches:
-      - main    
+      - main     # change if your default branch is different
  
 jobs:
   deploy:
@@ -11,31 +11,31 @@ jobs:
  
     steps:
  
-    #  Checkout repository
+    # 1️⃣ Checkout repository
     - name: Checkout code
       uses: actions/checkout@v4
  
-    #  Login to Docker Hub
+    # 2️⃣ Login to Docker Hub
     - name: Login to Docker Hub
       uses: docker/login-action@v3
       with:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
  
-    #  Build Docker image (SHA + latest)
+    # 3️⃣ Build Docker image (SHA + latest)
     - name: Build Docker image (SHA + latest)
       run: |
         docker build -t ${{ secrets.DOCKER_USERNAME }}/java-app:${{ github.sha }} .
         docker tag ${{ secrets.DOCKER_USERNAME }}/java-app:${{ github.sha }} \
                    ${{ secrets.DOCKER_USERNAME }}/java-app:latest
  
-    # Push both tags
+    # 4️⃣ Push both tags
     - name: Push Docker image (SHA + latest)
       run: |
         docker push ${{ secrets.DOCKER_USERNAME }}/java-app:${{ github.sha }}
         docker push ${{ secrets.DOCKER_USERNAME }}/java-app:latest
  
-    # SSH to EC2 and deploy to Minikube
+    # 5️⃣ SSH to EC2 and deploy to Minikube
     - name: Deploy to EC2 Minikube (update image to SHA, rollout)
       uses: appleboy/ssh-action@v1.0.0
       with:
@@ -62,5 +62,5 @@ jobs:
           kubectl get deployment java-app-deployment \
           -o jsonpath='{.spec.template.spec.containers[0].image}'; echo
  
-          echo " Current pods:"
+          echo "📦 Current pods:"
           kubectl get pods -o wide
