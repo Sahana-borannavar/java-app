@@ -3,7 +3,7 @@ name: CI/CD to EC2 (Java App, K8s, SHA tagging)
 on:
   push:
     branches:
-      - main     # change if your default branch is different
+      - main    
  
 jobs:
   deploy:
