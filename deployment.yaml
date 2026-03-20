@@ -17,5 +17,3 @@ spec:
         image: sahana1478/java-app:1.0
         ports:
         - containerPort: 8080
-~
-~
