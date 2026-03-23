@@ -16,4 +16,4 @@ spec:
         - name: java-app
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           ports:
-            - containerPort: {{ .Values.service.targetPort }}  
+            - containerPort: {{ .Values.service.targetPort }}
