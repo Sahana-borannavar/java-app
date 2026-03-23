@@ -48,12 +48,12 @@ jobs:
           echo " Using Minikube context"
           kubectl config use-context minikube || true
  
-         echo " Deploying using Helm"
-         cd ~/java-app/java-app-chart
+          echo " Deploying using Helm"
+          cd ~/java-app/java-app-chart
  
-         helm upgrade --install java-app-release . \
-         --set image.repository=${{ secrets.DOCKER_USERNAME }}/java-app \
-         --set image.tag=${{ github.sha }}
+          helm upgrade --install java-app-release . \
+             --set image.repository=${{ secrets.DOCKER_USERNAME }}/java-app \
+             --set image.tag=${{ github.sha }}
  
  
         
