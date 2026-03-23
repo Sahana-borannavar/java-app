@@ -48,19 +48,12 @@ jobs:
           echo " Using Minikube context"
           kubectl config use-context minikube || true
  
-          echo " Updating deployment image to new SHA"
-          kubectl set image deployment/java-app-deployment \
-          java-app=${{ secrets.DOCKER_USERNAME }}/java-app:${{ github.sha }}
+         echo " Deploying using Helm"
+         cd ~/java-app/java-app-chart
  
-          echo " Restarting deployment"
-          kubectl rollout restart deployment/java-app-deployment
+         helm upgrade --install java-app-release . \
+         --set image.repository=${{ secrets.DOCKER_USERNAME }}/java-app \
+         --set image.tag=${{ github.sha }}
  
-          echo " Waiting for rollout to complete..."
-          kubectl rollout status deployment/java-app-deployment --timeout=180s
  
-          echo " Verifying deployed image:"
-          kubectl get deployment java-app-deployment \
-          -o jsonpath='{.spec.template.spec.containers[0].image}'; echo
- 
-          echo "📦 Current pods:"
-          kubectl get pods -o wide
+        
