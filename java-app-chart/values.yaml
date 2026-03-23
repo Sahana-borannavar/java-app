@@ -2,10 +2,11 @@ replicaCount: 3
 
 image:
   repository: sahana1478/java-app
-  tag: "1.0"              # Will be overridden by CI with ${{ github.sha }}
+  tag: "1.0"
 
 service:
   type: NodePort
   port: 80
   targetPort: 8080
   nodePort: 30018
+
