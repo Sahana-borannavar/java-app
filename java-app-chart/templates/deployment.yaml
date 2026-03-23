@@ -13,7 +13,7 @@ spec:
         app: java-app
     spec:
       containers:
-      - name: java-app
-        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-        ports:
-          - containerPort: {{ .Values.service.targetPort }}
+        - name: java-app
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          ports:
+            - containerPort: {{ .Values.service.targetPort }}
